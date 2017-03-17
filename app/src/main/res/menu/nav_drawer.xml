@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/home_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:title="Home" />
+    </group>
+    <group
+        android:id="@+id/hotel_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/hotel"
+            android:title="Hotel" />
+    </group>
+    <group
+        android:id="@+id/airlines_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/airlines"
+            android:title="AirLines" />
+    </group>
+
+    <group
+        android:id="@+id/special_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/special"
+            android:title="Special Packages" />
+    </group>
+    <group
+        android:id="@+id/sight_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/sight"
+            android:title="Sight Seeing" />
+    </group>
+    <group
+        android:id="@+id/umrah_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/umrah"
+            android:title="Special Umrah" />
+    </group>
+    <group
+        android:id="@+id/about_grp"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/about"
+            android:title="About Us" />
+    </group>
+</menu>
