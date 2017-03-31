@@ -29,6 +29,7 @@
             android:id="@+id/special"
             android:title="Special Packages" />
     </group>
+    
     <group
         android:id="@+id/sight_grp"
         android:checkableBehavior="single">

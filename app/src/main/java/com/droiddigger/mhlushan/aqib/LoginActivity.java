@@ -41,7 +41,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(View view) {
-        new Login(this).execute(user.getText().toString(), pass.getText().toString());
+        if (user.getText().toString().equals("admin") && pass.getText().toString().equals("admin")) {
+            Intent intent = new Intent(this, AdminReplyChooser.class);
+            intent.putExtra("sender", "admin");
+            startActivity(intent);
+        } else {
+            new Login(this).execute(user.getText().toString(), pass.getText().toString());
+        }
     }
 
     public class Login extends AsyncTask<String, Void, String> {
@@ -68,7 +74,10 @@ public class LoginActivity extends AppCompatActivity {
             button.setVisibility(View.VISIBLE);
             Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
             if (result.equals("logged in")) {
-                startActivity(new Intent(ctx, FeedbackActivity.class));
+                Intent intent=new Intent(ctx, FeedbackActivity.class);
+                intent.putExtra("sender",user.getText().toString());
+                intent.putExtra("receiver","admin");
+                startActivity(intent);
             }
 
         }
