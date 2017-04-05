@@ -34,23 +34,27 @@
             android:id="@+id/hotelName"
             android:layout_below="@+id/hotelDate"
             android:hint="Hotel Name"
+            android:completionThreshold="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <AutoCompleteTextView
             android:id="@+id/hotelCity"
             android:hint="City"
+            android:completionThreshold="1"
             android:layout_below="@+id/hotelCountry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <AutoCompleteTextView
             android:id="@+id/hotelCountry"
             android:hint="Country"
+            android:completionThreshold="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <AutoCompleteTextView
             android:id="@+id/hotelDate"
             android:layout_below="@+id/hotelCity"
             android:hint="Date"
+            android:completionThreshold="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
