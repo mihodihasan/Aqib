@@ -38,177 +38,176 @@ import java.util.List;
 
 public class Hotel extends AppCompatActivity {
 
-    AutoCompleteTextView hotelNameET,hotelCountryET,hotelCityET,hotelDateET;
+    AutoCompleteTextView hotelNameET, hotelCountryET, hotelCityET, hotelDateET;
     ProgressBar hotelProgressBar;
     private Toolbar toolbar;
     RecyclerView hotelRecycler;
     HotelRecyclerAdaper adaper;
     List<HotelData> hotelDataList;
-    List<String> countryList,cityList;
+    List<String> countryList, cityList;
     List<HotelDataForRecycler> recyclerList;
-    private ArrayAdapter<String> countryAdapter,cityAdapter;
+    private ArrayAdapter<String> countryAdapter, cityAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotel);
 
-        recyclerList=new ArrayList<>();
-        adaper=new HotelRecyclerAdaper(recyclerList,this);
-        hotelRecycler=(RecyclerView)findViewById(R.id.hotelRecycler);
+        recyclerList = new ArrayList<>();
+        adaper = new HotelRecyclerAdaper(recyclerList, this);
+        hotelRecycler = (RecyclerView) findViewById(R.id.hotelRecycler);
         hotelRecycler.setLayoutManager(new LinearLayoutManager(this));
-        hotelDataList=new ArrayList<>();
-        hotelProgressBar= (ProgressBar) findViewById(R.id.hotelProgress);
+        hotelDataList = new ArrayList<>();
+        hotelProgressBar = (ProgressBar) findViewById(R.id.hotelProgress);
 
         new LoadHotelData(this).execute();
-
-        initializeAutocompleteEditTextFeature();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hotelRecycler.setAdapter(adaper);
+        initializeAutocompleteEditTextFeature();
 
-    }
-
-    void prepareCountry(){
-        for(int i=0;i<hotelDataList.size();i++){
-            countryList.add(hotelDataList.get(i).getHotelCountry());
-        }
-        Log.d("size","coountry"+countryList.size());
-        countryAdapter.notifyDataSetChanged();
     }
 
     private void initializeAutocompleteEditTextFeature() {
-        hotelNameET= (AutoCompleteTextView) findViewById(R.id.hotelName);
-        hotelCityET= (AutoCompleteTextView) findViewById(R.id.hotelCity);
-        hotelCountryET= (AutoCompleteTextView) findViewById(R.id.hotelCountry);
-        hotelDateET= (AutoCompleteTextView) findViewById(R.id.hotelDate);
+        hotelNameET = (AutoCompleteTextView) findViewById(R.id.hotelName);
+        hotelCityET = (AutoCompleteTextView) findViewById(R.id.hotelCity);
+        hotelCountryET = (AutoCompleteTextView) findViewById(R.id.hotelCountry);
+        hotelDateET = (AutoCompleteTextView) findViewById(R.id.hotelDate);
 
-        countryList=new ArrayList<>();
-        cityList=new ArrayList<>();
+        countryList = new ArrayList<>();
+        cityList = new ArrayList<>();
 
 
-        countryAdapter=new ArrayAdapter(this,android.R.layout.simple_dropdown_item_1line,
+        countryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line,
                 countryList);
         hotelCountryET.setAdapter(countryAdapter);
 
-        cityAdapter=new ArrayAdapter<>(this,android.R.layout.simple_dropdown_item_1line,
+        cityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line,
                 cityList);
         hotelCityET.setAdapter(cityAdapter);
 
-        //////////////////////////////////////////////////////////////////////////////////
-        hotelCountryET.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("myEvent","onClick");
-            }
-        });
-        hotelCountryET.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("myEvent","onItemSelected"+position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         hotelCountryET.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
             @Override
             public void onDismiss() {
-                Log.d("myEvent","onDissmiss "+hotelCountryET.getText().toString());
-            }
-        });
-        /////////////////////////////////////////////////////////////////////////////////
-        hotelCountryET.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 prepareCity(hotelCountryET.getText().toString());
-                Log.d("myEvent","onItemClick"+position);
             }
         });
 
-        hotelCityET.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        hotelCityET.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String city=hotelDataList.get(position).getHotelCity();
-                prepareHotelListData(hotelCountryET.getText().toString(),city);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onDismiss() {
+                prepareHotelListData(hotelCountryET.getText().toString(),hotelCityET.getText().toString());
             }
         });
     }
 
-    private void prepareHotelListData(String country,String city) {
-        for(int i=0;i<hotelDataList.size();i++){
-            if(hotelDataList.get(i).getHotelCountry().equals(country)&&hotelDataList.get(i).getHotelCity().equals(city)){
-                recyclerList.add(new HotelDataForRecycler(hotelDataList.get(i).getHotelName(),hotelDataList.get(i).getStatus()));
+    void prepareCountry() {
+        for (int i = 0; i < hotelDataList.size(); i++) {
+            if(!countryList.contains(hotelDataList.get(i).getHotelCountry())){
+                countryList.add(hotelDataList.get(i).getHotelCountry());
             }
         }
-        Log.d("size","hotel"+recyclerList.size());
-        adaper.notify();
+        countryAdapter.notifyDataSetChanged();
+    }
+
+    private void prepareHotelListData(String country, String city) {
+        recyclerList.clear();
+        for (int i = 0; i < hotelDataList.size(); i++) {
+            if (hotelDataList.get(i).getHotelCountry().equalsIgnoreCase(country) &&
+                    hotelDataList.get(i).getHotelCity().equalsIgnoreCase(city)) {
+                recyclerList.add(new HotelDataForRecycler(hotelDataList.get(i).getHotelName(),
+                        hotelDataList.get(i).getStatus()));
+            }
+        }
+        Log.d("size", "hotel" + recyclerList.size());
+        adaper.notifyDataSetChanged();
     }
 
     private void prepareCity(String country) {
         cityList.clear();
-        for(int i=0;i<hotelDataList.size();i++){
-            if(hotelDataList.get(i).getHotelCountry().equals(country)){
+        for (int i = 0; i < hotelDataList.size(); i++) {
+            if (hotelDataList.get(i).getHotelCountry().equalsIgnoreCase(country) &&
+                    !cityList.contains(hotelDataList.get(i).getHotelCity())) {
                 cityList.add(hotelDataList.get(i).getHotelCity());
             }
         }
-        Log.d("siize","city"+cityList.size());
+        Log.d("siize", "city" + cityList.size());
         cityAdapter.notifyDataSetChanged();
     }
 
-    class HotelDataForRecycler{
-        String name,status;
+    public class LoadHotelData extends AsyncTask<String, Void, String> {
+        Context ctx;
+        String jsonUrl;
+        String jasonString = "";
 
-        public HotelDataForRecycler(String name, String status) {
-            this.name = name;
-            this.status = status;
+        public LoadHotelData(Context ctx) {
+            this.ctx = ctx;
         }
 
-        public String getName() {
-            return name;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            hotelProgressBar.setVisibility(View.VISIBLE);
         }
 
-        public void setName(String name) {
-            this.name = name;
+        @Override
+        protected String doInBackground(String... params) {
+            jsonUrl = "https://irrepealable-substi.000webhostapp.com/hotel.php";
+            try {
+                URL url = new URL(jsonUrl);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder stringBuilder = new StringBuilder();
+                while ((jasonString = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(jasonString + "\n");
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                String r = stringBuilder.toString().trim();
+                return r;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "Unsuccessful";
         }
 
-        public String getStatus() {
-            return status;
-        }
+        @Override
+        protected void onPostExecute(String result) {
+            hotelProgressBar.setVisibility(View.GONE);
+            hotelDataList.clear();
+            recyclerList.clear();
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                JSONArray jsonArray = jsonObject.getJSONArray("hotels");
 
-        public void setStatus(String status) {
-            this.status = status;
+                int count = 0;
+                String hotel_name, hotel_country, hotel_city, hotel_date, hotel_status;
+                while (count < jsonArray.length()) {
+                    JSONObject jo = jsonArray.getJSONObject(count);
+                    hotel_name = jo.getString("hotel_name");
+                    hotel_country = jo.getString("hotel_country");
+                    hotel_city = jo.getString("hotel_city");
+                    hotel_date = jo.getString("hotel_date");
+                    hotel_status = jo.getString("hotel_status");
+                    hotelDataList.add(new HotelData(hotel_name, hotel_country, hotel_city, hotel_date, hotel_status));
+                    recyclerList.add(new HotelDataForRecycler(hotel_name, hotel_status));
+                    count++;
+                }
+            } catch (JSONException e) {
+            }
+            Log.d("size", "hotelDataList" + hotelDataList.size());
+            adaper.notifyDataSetChanged();
+            prepareCountry();
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_layout,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id=item.getItemId();
-
-        if(id==android.R.id.home){
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    class HotelData{
-        String hotelName,hotelCountry,hotelCity,date,status;
+    class HotelData {
+        String hotelName, hotelCountry, hotelCity, date, status;
 
         public String getHotelName() {
             return hotelName;
@@ -260,7 +259,8 @@ public class Hotel extends AppCompatActivity {
 
         }
     }
-    class HotelRecyclerAdaper extends RecyclerView.Adapter<HRViewHolder>{
+
+    class HotelRecyclerAdaper extends RecyclerView.Adapter<HRViewHolder> {
 
         List<HotelDataForRecycler> hotelList;
         Context context;
@@ -272,16 +272,17 @@ public class Hotel extends AppCompatActivity {
 
         @Override
         public HRViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new HRViewHolder(LayoutInflater.from(context).inflate(R.layout.hotel_status_row,parent,false));
+            return new HRViewHolder(LayoutInflater.from(context).inflate(R.layout.hotel_status_row, parent, false));
         }
 
         @Override
         public void onBindViewHolder(HRViewHolder holder, int position) {
             holder.hotelName.setText(hotelList.get(position).getName());
             holder.hotelStatus.setText(hotelList.get(position).getStatus());
-            if(hotelList.get(position).getStatus().startsWith("A")){
+            if (hotelList.get(position).getStatus().startsWith("A")||
+                    hotelList.get(position).getStatus().startsWith("a")) {
                 holder.hotelStatus.setTextColor(Color.GREEN);
-            }else{
+            } else {
                 holder.hotelStatus.setTextColor(Color.RED);
             }
         }
@@ -291,84 +292,57 @@ public class Hotel extends AppCompatActivity {
             return hotelList.size();
         }
     }
-    class HRViewHolder extends RecyclerView.ViewHolder{
-        TextView hotelName,hotelStatus;
+
+    class HRViewHolder extends RecyclerView.ViewHolder {
+        TextView hotelName, hotelStatus;
+
         public HRViewHolder(View itemView) {
             super(itemView);
 
-            hotelName= (TextView) itemView.findViewById(R.id.hotel_name_row);
-            hotelStatus=(TextView)itemView.findViewById(R.id.hotel_status_row);
+            hotelName = (TextView) itemView.findViewById(R.id.hotel_name_row);
+            hotelStatus = (TextView) itemView.findViewById(R.id.hotel_status_row);
         }
     }
 
-    public class LoadHotelData extends AsyncTask<String, Void, String> {
-        Context ctx;
-        String jsonUrl;
-        String jasonString = "";
+    class HotelDataForRecycler {
+        String name, status;
 
-        public LoadHotelData(Context ctx) {
-            this.ctx = ctx;
+        public HotelDataForRecycler(String name, String status) {
+            this.name = name;
+            this.status = status;
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            hotelProgressBar.setVisibility(View.VISIBLE);
+        public String getName() {
+            return name;
         }
 
-        @Override
-        protected String doInBackground(String... params) {
-            jsonUrl = "https://irrepealable-substi.000webhostapp.com/hotel.php";
-            try {
-                URL url = new URL(jsonUrl);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((jasonString = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(jasonString + "\n");
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                String r = stringBuilder.toString().trim();
-                return r;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return "Unsuccessful";
+        public void setName(String name) {
+            this.name = name;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            hotelProgressBar.setVisibility(View.GONE);
-            hotelDataList.clear();
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                JSONArray jsonArray = jsonObject.getJSONArray("hotels");
-
-                int count = 0;
-                String hotel_name, hotel_country, hotel_city,hotel_date,hotel_status;
-                while (count < jsonArray.length()) {
-                    JSONObject jo = jsonArray.getJSONObject(count);
-                    hotel_name = jo.getString("hotel_name");
-                    hotel_country = jo.getString("hotel_country");
-                    hotel_city = jo.getString("hotel_city");
-                    hotel_date = jo.getString("hotel_date");
-                    hotel_status = jo.getString("hotel_status");
-                    hotelDataList.add(new HotelData(hotel_name,hotel_country,hotel_city,hotel_date,hotel_status));
-                    recyclerList.add(new HotelDataForRecycler(hotel_name,hotel_status));
-                    count++;
-                }
-            } catch (JSONException e) {
-            }
-            Log.d("size","hotelDataList"+hotelDataList.size());
-            adaper.notifyDataSetChanged();
-            prepareCountry();
+        public String getStatus() {
+            return status;
         }
 
+        public void setStatus(String status) {
+            this.status = status;
+        }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_layout, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
